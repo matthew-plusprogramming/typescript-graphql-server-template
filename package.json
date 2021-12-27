@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "start-production": "ts-node -r tsconfig-paths/register src/index.ts",
     "start": "ts-node-dev --respawn -r tsconfig-paths/register src/index.ts",
     "db:setup": "ts-node -r tsconfig-paths/register ./src/test-utils/setup.ts",
     "test": "yarn db:setup && jest"
