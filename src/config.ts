@@ -6,4 +6,3 @@ const { PORT, TEST_PORT, JWT_SECRET_KEY, NODE_ENV } = process.env as {
 };
 
 export const env = { PORT, TEST_PORT, JWT_SECRET_KEY, NODE_ENV };
-

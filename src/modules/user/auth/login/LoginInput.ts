@@ -11,4 +11,3 @@ export class LoginInput {
   @Field({ nullable: true })
   refreshToken?: string;
 }
-
