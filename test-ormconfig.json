@@ -1,0 +1,8 @@
+{
+  "name": "default",
+  "host": "localhost",
+  "port": 27017,
+  "database": "test-db-test",
+  "useUnifiedTopology": true,
+  "useNewUrlParser": true
+}
