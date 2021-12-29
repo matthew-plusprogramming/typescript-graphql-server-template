@@ -1,11 +1,9 @@
 import { verify } from 'jsonwebtoken';
 import { MiddlewareFn } from 'type-graphql';
-
 import { env } from 'config';
 import { UnauthorizedError } from '../errors';
 import { AuthContext } from '~types/AuthContext';
 import { AuthToken } from '~types/authTypes';
-
 
 export const isAuth: MiddlewareFn<AuthContext> = async ({ context }, next) => {
   // Verify auth format

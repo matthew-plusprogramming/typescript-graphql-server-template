@@ -1,5 +1,5 @@
 import faker from 'faker';
-import { User }from '@entity/User';
+import { User } from '@entity/User';
 import { UserAuthTokens } from '@entity/UserAuthTokens';
 import { LoginErrorMessages } from '@modules/user/auth/login/errors';
 import { generateMutation } from '@test-utils/generateMutation';

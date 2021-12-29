@@ -1,5 +1,5 @@
 import { hash } from 'bcryptjs';
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Resolver } from 'type-graphql';
 import { User } from '@entity/User';
 import { UserAndAuth } from './Auth';
 import { generateAuthTokenPair } from './jwtUtil';

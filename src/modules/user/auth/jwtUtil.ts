@@ -1,4 +1,4 @@
-import { sign, decode, JwtPayload } from 'jsonwebtoken';
+import { JwtPayload, sign } from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import { User } from '@entity/User';
 import { UserAuthTokens } from '@entity/UserAuthTokens';
