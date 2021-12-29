@@ -4,7 +4,7 @@ export interface AuthContext {
   headers: {
     authorization: string;
   };
-  rippleAuthContext: {
+  authContext: {
     userToken: AuthToken | null;
   };
 }

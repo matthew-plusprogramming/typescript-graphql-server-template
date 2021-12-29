@@ -36,7 +36,8 @@ export const startServer =
     apolloServer = new ApolloServer({
       schema,
       introspection: env.NODE_ENV !== 'production',
-      plugins: [ ApolloServerPluginLandingPageGraphQLPlayground ]
+      plugins: [ ApolloServerPluginLandingPageGraphQLPlayground ],
+      context: ({ req }: {req: express.Request}) => ({ headers: req.headers })
     });
     await apolloServer.start();
     app = express();

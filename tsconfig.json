@@ -35,6 +35,9 @@
         "__The entity/../../* is a workaround for jest__",
         "entity/../../*"
       ],
+      "~types/*": [
+        "types/*"
+      ],
       "@entity/*": [
         "entity/*"
       ],
@@ -43,9 +46,6 @@
       ],
       "@test-utils/*": [
         "test-utils/*"
-      ],
-      "@types/*": [
-        "types/*"
       ],
       "@utils/*": [
         "utils/*"

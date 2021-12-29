@@ -7,10 +7,6 @@ import { RegisterInput } from './register/RegisterInput';
 
 @Resolver()
 export class RegisterResolver {
-  // TODO: Remove this once we add a different query
-  @Query(() => String)
-  async hello(): Promise<string> { return 'Hello World!'; }
-
   @Mutation(() => UserAndAuth)
   async register(
     @Arg('data') {
