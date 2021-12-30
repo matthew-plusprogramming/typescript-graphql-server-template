@@ -5,11 +5,14 @@ import { app } from 'server';
 
 export interface Options {
   source: string;
-  variableValues?: Maybe<Record<string, unknown>>
+  variableValues?: Maybe<Record<string, unknown>>;
+  headers?: Maybe<Record<string, string>>
 }
 
 export const graphqlCall =
-async ({ source, variableValues }: Options): Promise<ExecutionResult> => {
+async ({
+  source, variableValues, headers
+}: Options): Promise<ExecutionResult> => {
   return new Promise<ExecutionResult>((resolve, reject) => {
     const request = supertest(app);
     request
@@ -19,6 +22,7 @@ async ({ source, variableValues }: Options): Promise<ExecutionResult> => {
         variables: variableValues
       })
       .set('Accept', 'application/json')
+      .set({ ...headers })
       .end((err, res) => {
         if (err) {
           reject(err);
