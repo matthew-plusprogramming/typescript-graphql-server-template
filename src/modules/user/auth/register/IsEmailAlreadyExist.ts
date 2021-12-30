@@ -18,8 +18,8 @@ implements ValidatorConstraintInterface {
   }
 }
 
-export function IsEmailAlreadyExist(validationOptions?: ValidationOptions) {
-  return function (object: RegisterInput, propertyName: string) {
+export const IsEmailAlreadyExist = (validationOptions?: ValidationOptions) => {
+  return (object: RegisterInput, propertyName: string) => {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
@@ -28,4 +28,4 @@ export function IsEmailAlreadyExist(validationOptions?: ValidationOptions) {
       validator: IsEmailAlreadyExistConstraint
     });
   };
-}
+};
