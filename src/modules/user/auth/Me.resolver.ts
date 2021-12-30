@@ -16,7 +16,6 @@ export class MeResolver {
       where: { _id: new ObjectId(ctx.authContext.userToken.sub) }
     });
 
-    console.log(user);
     if (!user) throw new UnknownAuthError();
     return user;
   }
