@@ -2,9 +2,10 @@ import faker from 'faker';
 import { User } from '@entity/User';
 import { UserAuthTokens } from '@entity/UserAuthTokens';
 import { LoginErrorMessages } from '@modules/user/auth/login/errors';
-import { generateMutation } from '@test-utils/generateMutation';
 import { graphqlCall } from '@test-utils/graphqlCall';
+import { generateMutation, generateQuery } from '@test-utils/graphqlUtils';
 import { startServer, stopServer } from 'server';
+import { AuthErrorMessages } from './errors';
 import { RegisterErrorMessages } from './register/errors';
 
 beforeAll(async () => {
@@ -14,10 +15,10 @@ afterAll(async () => {
   await stopServer();
 });
 
-const registerMutation = generateMutation(
-  'Register',
-  'RegisterInput',
-  `
+const registerMutation = generateMutation({
+  nameCapitalCase: 'Register',
+  inputType: 'RegisterInput',
+  returnSignature: `
   user {
     email,
     firstName,
@@ -25,11 +26,11 @@ const registerMutation = generateMutation(
     username
   }
   `
-);
-const loginMutation = generateMutation(
-  'Login',
-  'LoginInput',
-  `
+});
+const loginMutation = generateMutation({
+  nameCapitalCase: 'Login',
+  inputType: 'LoginInput',
+  returnSignature: `
   user {
     email,
     firstName,
@@ -41,7 +42,16 @@ const loginMutation = generateMutation(
     refreshToken
   }
   `
-);
+});
+const meQuery = generateQuery({
+  nameCapitalCase: 'Me',
+  returnSignature: `
+  email,
+  firstName,
+  lastName,
+  username
+  `
+});
 
 describe('Auth', () => {
   const user = {
@@ -226,6 +236,59 @@ describe('Auth', () => {
       errors: [
         { message: LoginErrorMessages.INCORRECT_LOGIN_CREDENTIALS }
       ]
+    });
+  });
+
+  it('allow me query when logged in', async () => {
+    const response = await graphqlCall({
+      source: loginMutation,
+      variableValues: {
+        data: { email: user.email, password: user.password }
+      }
+    });
+
+    const responseDataAuth = response.data?.login?.auth;
+    auth.accessToken = responseDataAuth?.accessToken;
+    auth.refreshToken = responseDataAuth?.refreshToken;
+
+    const meResponse = await graphqlCall({
+      source: meQuery,
+      headers: {
+        'Authorization': `Bearer ${auth.accessToken}`
+      }
+    });
+    expect(meResponse).toMatchObject({
+      data: {
+        me: {
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          username: user.username
+        }
+      }
+    });
+  });
+  it('disallow me query when no authorization', async () => {
+    const meResponse = await graphqlCall({
+      source: meQuery
+    });
+    expect(meResponse).toMatchObject({
+      errors: [ {
+        message: AuthErrorMessages.UNAUTHORIZED
+      } ]
+    });
+  });
+  it('disallow me query when authorization token malformed', async () => {
+    const meResponse = await graphqlCall({
+      source: meQuery,
+      headers: {
+        'Authorization': 'Bearer this is not right'
+      }
+    });
+    expect(meResponse).toMatchObject({
+      errors: [ {
+        message: AuthErrorMessages.UNAUTHORIZED
+      } ]
     });
   });
 });
