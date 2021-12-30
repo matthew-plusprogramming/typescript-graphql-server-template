@@ -1,4 +1,6 @@
-import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
+import {
+  ApolloServerPluginLandingPageGraphQLPlayground
+} from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import express from 'express';

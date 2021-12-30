@@ -6,7 +6,10 @@ import { UserAuthTokens } from '@entity/UserAuthTokens';
 import { env } from 'config';
 import { UserAndAuth } from './Auth';
 import { generateAuthTokenPair, regenerateAuthTokenPair } from './jwtUtil';
-import { IncorrectLoginCredentialsError } from './login/errors';
+import {
+  EmailNotConfirmedError,
+  IncorrectLoginCredentialsError
+} from './login/errors';
 import { LoginInput } from './login/LoginInput';
 
 @Resolver()
@@ -36,6 +39,7 @@ export class LoginResolver {
             where: { _id: userAuthTokens.userId }
           });
           if (user) {
+            if (!user.confirmed) throw new EmailNotConfirmedError();
             return new UserAndAuth(newAuthTokens, user);
           }
         }
@@ -51,6 +55,8 @@ export class LoginResolver {
 
       const validPassword = await compare(password, user.password);
       if (!validPassword) throw new IncorrectLoginCredentialsError();
+
+      if (!user.confirmed) throw new EmailNotConfirmedError();
 
       const newAuthTokens = await generateAuthTokenPair(user);
       return new UserAndAuth(newAuthTokens, user);
