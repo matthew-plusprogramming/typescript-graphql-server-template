@@ -24,11 +24,13 @@ async (user: User): Promise<AuthTokenPair> => {
     await existingUserAuthTokens.remove();
   }
 
-  await UserAuthTokens.create({
-    accessToken: authTokenPair.accessToken,
-    refreshToken: authTokenPair.refreshToken,
-    userId: user._id
-  }).save();
+  await UserAuthTokens.update(
+    { userId: user._id },
+    {
+      accessToken: authTokenPair.accessToken,
+      refreshToken: authTokenPair.refreshToken
+    }
+  );
   return authTokenPair;
 };
 
@@ -51,11 +53,13 @@ Promise<AuthTokenPair> => {
     if (user) {
       const newTokens = await generateAuthTokenPair(user);
 
-      await UserAuthTokens.create({
-        _id: existingUserAuthTokens._id,
-        accessToken: newTokens.accessToken,
-        refreshToken: newTokens.refreshToken
-      }).save();
+      await UserAuthTokens.update(
+        { _id: existingUserAuthTokens._id },
+        {
+          accessToken: newTokens.accessToken,
+          refreshToken: newTokens.refreshToken
+        }
+      );
 
       return newTokens;
     }
