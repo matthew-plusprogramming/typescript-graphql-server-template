@@ -28,3 +28,10 @@ export class UserAndAuth {
     this.user = user;
   }
 }
+
+@ObjectType()
+export class Success {
+  // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+  @Field()
+  message: string = 'Success';
+}

@@ -1,9 +1,8 @@
 import { hash } from 'bcryptjs';
 import { Arg, Mutation, Resolver } from 'type-graphql';
 import { User } from '@entity/User';
-import { createConfirmationUrl } from './register/createConfirmationUrl';
+import { Email } from './Email.resolver';
 import { RegisterInput } from './register/RegisterInput';
-import { sendConfirmationEmail } from './register/sendConfirmationEmail';
 
 @Resolver()
 export class RegisterResolver {
@@ -28,10 +27,7 @@ export class RegisterResolver {
       password: hashedPassword
     }).save();
 
-    await sendConfirmationEmail(
-      email,
-      await createConfirmationUrl(user._id.toString())
-    );
+    await new Email().sendConfirmationEmail({ email: user.email });
     return user;
   }
 }
