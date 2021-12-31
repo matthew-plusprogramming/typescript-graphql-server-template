@@ -23,6 +23,18 @@ Features:
     - Authmatic refresh token reuse detection
   - Confirmation emails sent through nodemailer using the Gmail API
 
+Planned Features:
+- Auth module
+  - Logout functionality
+  - Forgot password functionality
+- File uploads
+- General security
+  - Query complexity checks
+  - Query depth limits
+  - Paginated results
+  - API timeouts
+  - Rate limiting
+
 ## .Env Setup
 
 Create a .env file in the root of the project and populate the following variables:
