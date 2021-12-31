@@ -56,6 +56,7 @@ export const startServer =
       const userId = await redis.get(confirmId);
       if (!userId) res.status(404).send('Invalid id');
 
+      await redis.del(confirmId);
       await User.update({ _id: new ObjectId(userId) }, { confirmed: true });
       res.status(200).send('OK');
     });
