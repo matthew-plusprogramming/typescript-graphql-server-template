@@ -1,6 +1,6 @@
 import { JwtPayload, sign } from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
-import { v4 } from 'uuid';
+import { createHmac } from 'crypto';
 import { User } from '@entity/User';
 import { UserAuthTokens } from '@entity/UserAuthTokens';
 import { env } from 'config';
@@ -59,10 +59,17 @@ Promise<AuthTokenPair> => {
   else throw new Error();
 };
 
+const generateJWTKey = (user: User): string => {
+  const keyRaw = user._id + user.password;
+  return createHmac('sha256', env.JWT_SECRET_KEY)
+    .update(keyRaw)
+    .digest('hex');
+};
+
 const generateAccessToken = async (user: User): Promise<string> => {
   return new Promise((resolve, reject) => {
     sign(
-      { sub: user._id, rand: v4() },
+      { sub: user._id, key: generateJWTKey(user) },
       env.JWT_SECRET_KEY as string,
       jwtAccessTokenOptions,
       (err, token) => {
@@ -78,7 +85,7 @@ const generateAccessToken = async (user: User): Promise<string> => {
 const generateRefreshToken = async (user: User): Promise<string> => {
   return new Promise((resolve, reject) => {
     sign(
-      { sub: user._id, rand: v4() },
+      { sub: user._id, key: generateJWTKey(user) },
       env.JWT_SECRET_KEY as string,
       jwtRefreshTokenOptions,
       (err, token) => {

@@ -17,6 +17,10 @@ afterAll(async () => {
   await stopServer();
 });
 
+const delay = (ms: number): Promise<void> => new Promise((resolve) => {
+  setTimeout(() => { resolve(); }, ms); }
+);
+
 const registerMutation = generateMutation({
   nameCapitalCase: 'Register',
   inputType: 'RegisterInput',
@@ -214,6 +218,7 @@ describe('Auth', () => {
     expect(dbUserAuthTokens).toBeTruthy();
   });
   it('login user with regenerated refresh token', async () => {
+    await delay(1000);
     const response = await graphqlCall({
       source: loginMutation,
       variableValues: {
@@ -249,6 +254,7 @@ describe('Auth', () => {
     expect(dbUserAuthTokens).toBeTruthy();
   });
   it('fail login on reuse of refresh token', async () => {
+    await delay(1000);
     const response = await graphqlCall({
       source: loginMutation,
       variableValues: {
