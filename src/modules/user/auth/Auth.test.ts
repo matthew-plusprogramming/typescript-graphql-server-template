@@ -303,6 +303,8 @@ describe('Auth', () => {
       ]
     });
   });
+  // TODO: Implement test fail refresh token login on change password
+  // TODO: Implement test fail refresh token login on logout
 
   it('allow me query when logged in', async () => {
     const response = await graphqlCall({

@@ -13,4 +13,7 @@ export class UserAuthTokens extends BaseEntity {
 
   @Column()
   refreshToken!: string;
+
+  @Column()
+  securityKey!: string;
 }

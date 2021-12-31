@@ -1,5 +1,6 @@
 import { JwtPayload, sign } from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
+import { v4 } from 'uuid';
 import { createHmac } from 'crypto';
 import { User } from '@entity/User';
 import { UserAuthTokens } from '@entity/UserAuthTokens';
@@ -12,23 +13,27 @@ export interface AuthTokenPair {
 }
 export const generateAuthTokenPair =
 async (user: User): Promise<AuthTokenPair> => {
-  const authTokenPair = {
-    accessToken: await generateAccessToken(user),
-    refreshToken: await generateRefreshToken(user)
-  };
+  let securityKey = v4();
 
   // We want to keep only one pair of auth tokens valid for any given user
   const existingUserAuthTokens = await UserAuthTokens.findOne({
     where: { userId: user._id }
   });
   if (existingUserAuthTokens) {
+    securityKey = existingUserAuthTokens.securityKey;
     await existingUserAuthTokens.remove();
   }
+
+  const authTokenPair = {
+    accessToken: await generateAccessToken(user, securityKey),
+    refreshToken: await generateRefreshToken(user, securityKey)
+  };
 
   const userAuthTokensCreateParams = {
     userId: user._id,
     accessToken: authTokenPair.accessToken,
-    refreshToken: authTokenPair.refreshToken
+    refreshToken: authTokenPair.refreshToken,
+    securityKey
   };
   await UserAuthTokens.create(userAuthTokensCreateParams).save();
   return authTokenPair;
@@ -51,6 +56,14 @@ Promise<AuthTokenPair> => {
       where: { _id: existingUserAuthTokens.userId }
     });
     if (user) {
+      // Check key against current password and security key
+      const keyToCompare =
+        generateJWTKey(user, existingUserAuthTokens.securityKey);
+
+      if (keyToCompare !== verifiedRefreshTokenPayload.key) {
+        throw new Error();
+      }
+
       await existingUserAuthTokens.remove();
       return await generateAuthTokenPair(user);
     }
@@ -59,17 +72,18 @@ Promise<AuthTokenPair> => {
   else throw new Error();
 };
 
-const generateJWTKey = (user: User): string => {
-  const keyRaw = user._id + user.password;
+const generateJWTKey = (user: User, securityKey: string): string => {
+  const keyRaw = user._id + user.password + securityKey;
   return createHmac('sha256', env.JWT_SECRET_KEY)
     .update(keyRaw)
     .digest('hex');
 };
 
-const generateAccessToken = async (user: User): Promise<string> => {
+const generateAccessToken =
+async (user: User, securityKey: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     sign(
-      { sub: user._id, key: generateJWTKey(user) },
+      { sub: user._id, key: generateJWTKey(user, securityKey) },
       env.JWT_SECRET_KEY as string,
       jwtAccessTokenOptions,
       (err, token) => {
@@ -82,10 +96,11 @@ const generateAccessToken = async (user: User): Promise<string> => {
     );
   });
 };
-const generateRefreshToken = async (user: User): Promise<string> => {
+const generateRefreshToken =
+async (user: User, securityKey: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     sign(
-      { sub: user._id, key: generateJWTKey(user) },
+      { sub: user._id, key: generateJWTKey(user, securityKey) },
       env.JWT_SECRET_KEY as string,
       jwtRefreshTokenOptions,
       (err, token) => {
