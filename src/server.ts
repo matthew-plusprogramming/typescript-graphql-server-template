@@ -4,9 +4,12 @@ import {
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import express from 'express';
+import { ObjectId } from 'mongodb';
 import { Connection, ConnectionOptions, createConnection } from 'typeorm';
 import { Server } from 'http';
 import 'reflect-metadata';
+import { User } from '@entity/User';
+import { redis, stopRedis } from 'redis';
 import { env } from './config';
 import { createSchema } from './utils/createSchema';
 import ormconfig from '~escape-src/ormconfig.json';
@@ -48,10 +51,19 @@ export const startServer =
     app.get('/', (_, res) => {
       res.status(200).send('OK');
     });
+    app.get('/user/confirm/:confirmId', async (req, res) => {
+      const { confirmId } = req.params;
+      const userId = await redis.get(confirmId);
+      if (!userId) res.status(404).send('Invalid id');
+
+      await User.update({ _id: new ObjectId(userId) }, { confirmed: true });
+      res.status(200).send('OK');
+    });
     apolloServer.applyMiddleware({ app });
 
-    expressServer = app.listen(testMode ? env.TEST_PORT : env.PORT, () => {
-      console.log(`App is listening on port ${env.PORT}`);
+    const port = testMode ? env.TEST_PORT : env.PORT;
+    expressServer = app.listen(port, () => {
+      console.log(`App is listening on port ${port}`);
     });
   };
 
@@ -59,4 +71,5 @@ export const stopServer = async (): Promise<void> => {
   if (connection) await connection.close();
   if (expressServer) await expressServer.close();
   if (apolloServer) await apolloServer.stop();
+  if (redis) await stopRedis();
 };

@@ -2,8 +2,10 @@ import faker from 'faker';
 import { User } from '@entity/User';
 import { UserAuthTokens } from '@entity/UserAuthTokens';
 import { LoginErrorMessages } from '@modules/user/auth/login/errors';
+import { apiCall, RequestType } from '@test-utils/apiCall';
 import { graphqlCall } from '@test-utils/graphqlCall';
 import { generateMutation, generateQuery } from '@test-utils/graphqlUtils';
+import { redis } from 'redis';
 import { startServer, stopServer } from 'server';
 import { AuthErrorMessages } from './errors';
 import { RegisterErrorMessages } from './register/errors';
@@ -19,12 +21,10 @@ const registerMutation = generateMutation({
   nameCapitalCase: 'Register',
   inputType: 'RegisterInput',
   returnSignature: `
-  user {
-    email,
-    firstName,
-    lastName,
-    username
-  }
+  email,
+  firstName,
+  lastName,
+  username
   `
 });
 const loginMutation = generateMutation({
@@ -77,12 +77,10 @@ describe('Auth', () => {
     expect(response).toMatchObject({
       data: {
         register: {
-          user: {
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            username: user.username
-          }
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          username: user.username
         }
       }
     });
@@ -120,6 +118,34 @@ describe('Auth', () => {
     expect(dbUser?.username).toBe(user.username);
   });
 
+  it('fail login on email not confirmed', async () => {
+    const response = await graphqlCall({
+      source: loginMutation,
+      variableValues: {
+        data: { email: user.email, password: user.password }
+      }
+    });
+
+    const responseDataAuth = response.data?.login?.auth;
+    expect(responseDataAuth).toBeUndefined();
+
+    expect(response).toMatchObject({
+      errors: [
+        { message: LoginErrorMessages.EMAIL_NOT_CONFIRMED }
+      ]
+    });
+  });
+  it('confirm user email', async () => {
+    const createdUser = (await redis.scan('0'))[ 1 ][ 0 ];
+
+    const response = await apiCall({
+      endpoint: `/user/confirm/${createdUser}`,
+      requestType: RequestType.GET
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.text).toBe('OK');
+  });
   it('login user with email and password', async () => {
     const response = await graphqlCall({
       source: loginMutation,
@@ -162,6 +188,41 @@ describe('Auth', () => {
 
     const responseDataAuth = response.data?.login?.auth;
     expect(responseDataAuth).toBeDefined();
+    auth.accessToken = responseDataAuth?.accessToken;
+    auth.refreshToken = responseDataAuth?.refreshToken;
+    expect(auth.accessToken).toBeTruthy();
+    expect(auth.refreshToken).toBeTruthy();
+
+    expect(response).toMatchObject({
+      data: {
+        login: {
+          user: {
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username
+          },
+          auth: {
+          }
+        }
+      }
+    });
+
+    const dbUser = await User.findOne({ where: { email: user.email } });
+    const dbUserAuthTokens =
+      await UserAuthTokens.findOne({ where: { userId: dbUser?._id } });
+    expect(dbUserAuthTokens).toBeTruthy();
+  });
+  it('login user with regenerated refresh token', async () => {
+    const response = await graphqlCall({
+      source: loginMutation,
+      variableValues: {
+        data: { refreshToken: auth.refreshToken }
+      }
+    });
+
+    const responseDataAuth = response.data?.login?.auth;
+    expect(responseDataAuth).toBeDefined();
     // ! This line was removed purposefully for the next test
     // auth.refreshToken = responseDataAuth?.refreshToken;
     expect(auth.accessToken).toBeTruthy();
@@ -177,8 +238,6 @@ describe('Auth', () => {
             username: user.username
           },
           auth: {
-            accessToken: auth.accessToken,
-            refreshToken: auth.refreshToken
           }
         }
       }

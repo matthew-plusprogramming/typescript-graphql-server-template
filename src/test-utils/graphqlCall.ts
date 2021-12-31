@@ -6,7 +6,7 @@ import { app } from 'server';
 export interface Options {
   source: string;
   variableValues?: Maybe<Record<string, unknown>>;
-  headers?: Maybe<Record<string, string>>
+  headers?: Record<string, string>
 }
 
 export const graphqlCall =

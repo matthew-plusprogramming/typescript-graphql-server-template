@@ -9,6 +9,7 @@ Built with:
 - Apollo Server
 - Express
 - MongoDB
+- Redis
 
 Features:
 - Support for wallaby.js
@@ -20,6 +21,7 @@ Features:
   - JWT authentication & additional security measures
     - Rotating refresh tokens
     - Authmatic refresh token reuse detection
+  - Confirmation emails sent through nodemailer using the Gmail API
 
 ## .Env Setup
 
@@ -29,7 +31,15 @@ PORT=3000 # You can set this to anything
 TEST_PORT=0 # You can set this to anything, 0 makes it a random port
 JWT_SECRET_KEY=XYZ # Put a JWT secret key here (I normally use a randomly generated HS256 key)
 NODE_ENV=development # Set this to production when running production mode
+SERVER_IP=123.45.6.78 # Set this to your server's IP address (can be https://...)
+
+# Gmail client configuration
+GMAIL_CLIENT_ID=XYZ
+GMAIL_CLIENT_SECRET=XYZ
+GMAIL_REFRESH_TOKEN=XYZ
 ```
+
+For the Gmail client confiuration, I'm using the Gmail API to send confirmation emails, you can edit `src/modules/user/auth/register/sendConfirmationEmail.ts` to change the method for sending emails.
 
 ## TypeORM Configuration
 

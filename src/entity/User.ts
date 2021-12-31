@@ -26,4 +26,7 @@ export class User extends BaseEntity {
   @Field()
   @Column()
   username!: string;
+
+  @Column('bool', { default: false })
+  confirmed!: boolean;
 }

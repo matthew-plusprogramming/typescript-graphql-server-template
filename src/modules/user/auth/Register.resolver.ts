@@ -1,13 +1,13 @@
 import { hash } from 'bcryptjs';
 import { Arg, Mutation, Resolver } from 'type-graphql';
 import { User } from '@entity/User';
-import { UserAndAuth } from './Auth';
-import { generateAuthTokenPair } from './jwtUtil';
+import { createConfirmationUrl } from './register/createConfirmationUrl';
 import { RegisterInput } from './register/RegisterInput';
+import { sendConfirmationEmail } from './register/sendConfirmationEmail';
 
 @Resolver()
 export class RegisterResolver {
-  @Mutation(() => UserAndAuth)
+  @Mutation(() => User)
   async register(
     @Arg('data') {
       username,
@@ -16,7 +16,7 @@ export class RegisterResolver {
       email,
       password
     }: RegisterInput
-  ): Promise<UserAndAuth> {
+  ): Promise<User> {
     // Hash password and save to db
     const hashedPassword = await hash(password, 12);
 
@@ -27,7 +27,11 @@ export class RegisterResolver {
       email,
       password: hashedPassword
     }).save();
-    const newAuthTokens = await generateAuthTokenPair(user);
-    return new UserAndAuth(newAuthTokens, user);
+
+    await sendConfirmationEmail(
+      email,
+      await createConfirmationUrl(user._id.toString())
+    );
+    return user;
   }
 }

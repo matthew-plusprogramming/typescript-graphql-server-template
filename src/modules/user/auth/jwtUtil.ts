@@ -1,5 +1,6 @@
 import { JwtPayload, sign } from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
+import { v4 } from 'uuid';
 import { User } from '@entity/User';
 import { UserAuthTokens } from '@entity/UserAuthTokens';
 import { env } from 'config';
@@ -24,13 +25,12 @@ async (user: User): Promise<AuthTokenPair> => {
     await existingUserAuthTokens.remove();
   }
 
-  await UserAuthTokens.update(
-    { userId: user._id },
-    {
-      accessToken: authTokenPair.accessToken,
-      refreshToken: authTokenPair.refreshToken
-    }
-  );
+  const userAuthTokensCreateParams = {
+    userId: user._id,
+    accessToken: authTokenPair.accessToken,
+    refreshToken: authTokenPair.refreshToken
+  };
+  await UserAuthTokens.create(userAuthTokensCreateParams).save();
   return authTokenPair;
 };
 
@@ -51,17 +51,8 @@ Promise<AuthTokenPair> => {
       where: { _id: existingUserAuthTokens.userId }
     });
     if (user) {
-      const newTokens = await generateAuthTokenPair(user);
-
-      await UserAuthTokens.update(
-        { _id: existingUserAuthTokens._id },
-        {
-          accessToken: newTokens.accessToken,
-          refreshToken: newTokens.refreshToken
-        }
-      );
-
-      return newTokens;
+      await existingUserAuthTokens.remove();
+      return await generateAuthTokenPair(user);
     }
     else throw new Error();
   }
@@ -71,7 +62,7 @@ Promise<AuthTokenPair> => {
 const generateAccessToken = async (user: User): Promise<string> => {
   return new Promise((resolve, reject) => {
     sign(
-      { sub: user._id },
+      { sub: user._id, rand: v4() },
       env.JWT_SECRET_KEY as string,
       jwtAccessTokenOptions,
       (err, token) => {
@@ -87,7 +78,7 @@ const generateAccessToken = async (user: User): Promise<string> => {
 const generateRefreshToken = async (user: User): Promise<string> => {
   return new Promise((resolve, reject) => {
     sign(
-      { sub: user._id },
+      { sub: user._id, rand: v4() },
       env.JWT_SECRET_KEY as string,
       jwtRefreshTokenOptions,
       (err, token) => {
