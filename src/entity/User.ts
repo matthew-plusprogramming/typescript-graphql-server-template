@@ -1,12 +1,13 @@
+import { ObjectId } from 'mongodb';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, ObjectID, ObjectIdColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ObjectIdColumn } from 'typeorm';
 
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
   @Field(() => ID)
   @ObjectIdColumn()
-  _id!: ObjectID;
+  _id!: ObjectId;
 
   @Field()
   @Column('text', { unique: true })
