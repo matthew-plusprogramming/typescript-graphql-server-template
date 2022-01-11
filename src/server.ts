@@ -10,10 +10,10 @@ import { Server } from 'http';
 import 'reflect-metadata';
 import { User } from '@entity/User';
 import { redis, stopRedis } from 'redis';
-import { env } from './config';
-import { createSchema } from './utils/createSchema';
 import ormconfig from '~escape-src/ormconfig.json';
 import testOrmconfig from '~escape-src/test-ormconfig.json';
+import { env } from './config';
+import { createSchema } from './utils/createSchema';
 
 let connection: Connection;
 let expressServer: Server;
