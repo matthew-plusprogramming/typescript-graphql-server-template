@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
-import { env } from 'config';
-import { redis } from 'redis';
+import { env } from '~/config';
+import { redis } from '~/redis';
 
 export const createConfirmationUrl =
 async (userId: string): Promise<string> => {

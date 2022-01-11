@@ -5,6 +5,8 @@
   "scripts": {
     "start-production": "ts-node -r tsconfig-paths/register src/index.ts",
     "start": "ts-node-dev --respawn -r tsconfig-paths/register src/index.ts",
+    "build": "tsc --project tsconfig.json && cp .env dist/.env",
+    "run-build": "cd dist && yarn && node src/index.js",
     "db:setup": "ts-node -r tsconfig-paths/register src/test-utils/setup.ts",
     "test": "yarn db:setup && jest"
   },
@@ -20,6 +22,7 @@
     "graphql": "^15.3.0",
     "ioredis": "^4.28.2",
     "jsonwebtoken": "^8.5.1",
+    "module-alias": "^2.2.2",
     "mongodb": "^3.7.3",
     "nodemailer": "^6.7.2",
     "reflect-metadata": "^0.1.13",
@@ -62,5 +65,14 @@
   },
   "wallaby": {
     "autoDetect": true
+  },
+  "_moduleAliases": {
+    "~escape-src": "src/..",
+    "~types": "src/types",
+    "~": "src",
+    "@entity": "src/entity",
+    "@modules": "src/modules",
+    "@test-utils": "src/test-utils",
+    "@utils": "src/utils"
   }
 }

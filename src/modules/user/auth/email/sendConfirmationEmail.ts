@@ -1,5 +1,5 @@
 import { createTransport } from 'nodemailer';
-import { env } from 'config';
+import { env } from '~/config';
 
 export const sendConfirmationEmail =
 async (email: string, url: string): Promise<void> => {

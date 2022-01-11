@@ -3,7 +3,7 @@ import { JwtPayload, verify } from 'jsonwebtoken';
 import { Arg, Mutation, Resolver } from 'type-graphql';
 import { User } from '@entity/User';
 import { UserAuthTokens } from '@entity/UserAuthTokens';
-import { env } from 'config';
+import { env } from '~/config';
 import { UserAndAuth } from './Auth';
 import { generateAuthTokenPair, regenerateAuthTokenPair } from './jwtUtil';
 import {
