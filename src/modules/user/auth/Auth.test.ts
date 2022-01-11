@@ -5,8 +5,8 @@ import { LoginErrorMessages } from '@modules/user/auth/login/errors';
 import { apiCall, RequestType } from '@test-utils/apiCall';
 import { graphqlCall } from '@test-utils/graphqlCall';
 import { generateMutation, generateQuery } from '@test-utils/graphqlUtils';
-import { redis } from '~/redis';
 import { startServer, stopServer } from 'server';
+import { redis } from '~/redis';
 import { AuthErrorMessages } from './errors';
 import { RegisterErrorMessages } from './register/errors';
 
