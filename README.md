@@ -20,7 +20,7 @@ Features:
 - Generic auth module
   - JWT authentication & additional security measures
     - Rotating refresh tokens
-    - Authmatic refresh token reuse detection
+    - Automatic refresh token reuse detection
   - Confirmation emails sent through nodemailer using the Gmail API
 
 Planned Features:
