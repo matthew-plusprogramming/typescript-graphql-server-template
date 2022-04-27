@@ -3,8 +3,8 @@ import { ObjectId } from 'mongodb';
 import { v4 } from 'uuid';
 import { createHmac } from 'crypto';
 import { User } from '@entity/User';
-import { UserAuthTokens } from '@entity/UserAuthTokens';
 import { env } from '~/config';
+import { UserAuthTokens } from '~/entity/UserAuthTokens';
 import { jwtAccessTokenOptions, jwtRefreshTokenOptions } from './jwtOptions';
 
 export interface AuthTokenPair {
