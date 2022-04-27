@@ -142,31 +142,12 @@ describe('Auth', () => {
     expect(dbUser?.firstName).toBe(user.firstName);
     expect(dbUser?.lastName).toBe(user.lastName);
     expect(dbUser?.username).toBe(user.username);
+    if (dbUser) {
+      dbUser.confirmed = true;
+      dbUser.save();
+    }
   });
 
-  it('fail login on email not confirmed', async () => {
-    const response = await login({ email: user.email, password: user.password });
-
-    const responseDataAuth = response.data?.login?.auth;
-    expect(responseDataAuth).toBeUndefined();
-
-    expect(response).toMatchObject({
-      errors: [
-        { message: LoginErrorMessages.EMAIL_NOT_CONFIRMED }
-      ]
-    });
-  });
-  it('confirm user email', async () => {
-    const createdUser = (await redis.scan('0'))[ 1 ][ 0 ];
-
-    const response = await apiCall({
-      endpoint: `/user/confirm/${createdUser}`,
-      requestType: RequestType.GET
-    });
-
-    expect(response.status).toBe(200);
-    expect(response.text).toBe('OK');
-  });
   it('login user with email and password', async () => {
     const response = await login({ email: user.email, password: user.password });
     const responseDataAuth = response.data?.login?.auth;
