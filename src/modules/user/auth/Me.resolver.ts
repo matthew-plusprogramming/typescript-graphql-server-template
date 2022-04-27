@@ -1,9 +1,9 @@
 import { ObjectId } from 'mongodb';
 import { Ctx, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { User } from '@entity/User';
+import { AuthContext } from '~types/AuthContext';
 import { UnknownAuthError } from './errors';
 import { isAuth } from './middleware/isAuth';
-import { AuthContext } from '~types/AuthContext';
 
 @Resolver()
 export class MeResolver {

@@ -49,6 +49,7 @@ SERVER_IP=123.45.6.78 # Set this to your server's IP address (can be https://...
 GMAIL_CLIENT_ID=XYZ
 GMAIL_CLIENT_SECRET=XYZ
 GMAIL_REFRESH_TOKEN=XYZ
+GMAIL_SENDER_EMAIL=XYZ@XYZ.com
 ```
 
 For the Gmail client confiuration, I'm using the Gmail API to send confirmation emails, you can edit `src/modules/user/auth/register/sendConfirmationEmail.ts` to change the method for sending emails.

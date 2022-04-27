@@ -15,7 +15,7 @@ export class Email {
     }: SendConfirmationEmailInput
   ): Promise<Success> {
     const user = await User.findOne({
-      email
+      where: { email }
     });
 
     if (!user) throw new UnknownAuthError();

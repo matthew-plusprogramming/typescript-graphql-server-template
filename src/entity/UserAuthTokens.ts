@@ -1,20 +1,19 @@
-import { ObjectId } from 'mongodb';
-import { BaseEntity, Column, Entity, ObjectIdColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ObjectID, ObjectIdColumn } from 'typeorm';
 
 @Entity()
 export class UserAuthTokens extends BaseEntity {
   @ObjectIdColumn()
-  _id!: ObjectId;
+    _id!: ObjectID;
 
   @Column('string')
-  userId!: ObjectId;
+    userId!: ObjectID;
 
   @Column()
-  accessToken!: string;
+    accessToken!: string;
 
   @Column()
-  refreshToken!: string;
+    refreshToken!: string;
 
   @Column()
-  securityKey!: string;
+    securityKey!: string;
 }

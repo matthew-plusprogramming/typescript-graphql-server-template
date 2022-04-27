@@ -3,11 +3,11 @@ import { Field, InputType } from 'type-graphql';
 @InputType()
 export class LoginInput {
   @Field({ nullable: true })
-  email?: string;
+    email?: string;
 
   @Field({ nullable: true })
-  password?: string;
+    password?: string;
 
   @Field({ nullable: true })
-  refreshToken?: string;
+    refreshToken?: string;
 }

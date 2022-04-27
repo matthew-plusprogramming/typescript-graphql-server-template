@@ -7,21 +7,21 @@ import { IsEmailAlreadyExist } from './IsEmailAlreadyExist';
 export class RegisterInput {
   @Field()
   @Length(1, 255)
-  username!: string;
+    username!: string;
 
   @Field()
   @Length(1, 255)
-  firstName!: string;
+    firstName!: string;
 
   @Field()
   @Length(1, 255)
-  lastName!: string;
+    lastName!: string;
 
   @Field()
   @IsEmail()
   @IsEmailAlreadyExist({ message: RegisterErrorMessages.EMAIL_ALREADY_IN_USE })
-  email!: string;
+    email!: string;
 
   @Field()
-  password!: string;
+    password!: string;
 }

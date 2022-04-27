@@ -7,5 +7,5 @@ export class SendConfirmationEmailInput {
   @Field()
   @IsEmail()
   @IsEmailForUnconfirmedUser()
-  email!: string;
+    email!: string;
 }

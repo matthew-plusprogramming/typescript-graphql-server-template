@@ -4,8 +4,7 @@ import {
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import express from 'express';
-import { ObjectId } from 'mongodb';
-import { Connection, ConnectionOptions, createConnection } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { Server } from 'http';
 import { User } from '@entity/User';
 import { redis, stopRedis } from '~/redis';
@@ -14,14 +13,14 @@ import testOrmconfig from '~escape-src/test-ormconfig.json';
 import { env } from './config';
 import { createSchema } from './utils/createSchema';
 
-let connection: Connection;
+let connection: DataSource;
 let expressServer: Server;
 let apolloServer: ApolloServer;
 export let app: express.Express;
 
 export const startServer =
   async (testMode = false, drop = false): Promise<void> => {
-    let connectionOptions: ConnectionOptions = {
+    let connectionOptions: DataSourceOptions = {
       'type': 'mongodb',
       'synchronize': drop,
       'dropSchema': drop,
@@ -34,7 +33,8 @@ export const startServer =
       { ...connectionOptions, ...testOrmconfig }
       : { ...connectionOptions, ...ormconfig };
 
-    connection = await createConnection(connectionOptions);
+    connection = new DataSource(connectionOptions);
+    await connection.initialize();
     const schema = await createSchema();
 
     apolloServer = new ApolloServer({
@@ -59,7 +59,7 @@ export const startServer =
       }
 
       await redis.del(confirmId);
-      await User.update({ _id: new ObjectId(userId) }, { confirmed: true });
+      await User.update(userId, { confirmed: true });
       res.status(200).send('OK');
     });
     apolloServer.applyMiddleware({ app });
@@ -71,7 +71,7 @@ export const startServer =
   };
 
 export const stopServer = async (): Promise<void> => {
-  if (connection) await connection.close();
+  if (connection) await connection.destroy();
   if (expressServer) await expressServer.close();
   if (apolloServer) await apolloServer.stop();
   if (redis) await stopRedis();

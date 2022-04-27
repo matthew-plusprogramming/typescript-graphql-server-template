@@ -9,7 +9,8 @@ const {
   SERVER_IP,
   GMAIL_CLIENT_ID,
   GMAIL_CLIENT_SECRET,
-  GMAIL_REFRESH_TOKEN
+  GMAIL_REFRESH_TOKEN,
+  GMAIL_SENDER_EMAIL
 } = process.env as {
   [key: string]: string;
 };
@@ -22,5 +23,6 @@ export const env = {
   SERVER_IP,
   GMAIL_CLIENT_ID,
   GMAIL_CLIENT_SECRET,
-  GMAIL_REFRESH_TOKEN
+  GMAIL_REFRESH_TOKEN,
+  GMAIL_SENDER_EMAIL
 };

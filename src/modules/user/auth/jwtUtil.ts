@@ -29,13 +29,12 @@ async (user: User): Promise<AuthTokenPair> => {
     refreshToken: await generateRefreshToken(user, securityKey)
   };
 
-  const userAuthTokensCreateParams = {
+  await UserAuthTokens.create({
     userId: user._id,
     accessToken: authTokenPair.accessToken,
     refreshToken: authTokenPair.refreshToken,
     securityKey
-  };
-  await UserAuthTokens.create(userAuthTokensCreateParams).save();
+  }).save();
   return authTokenPair;
 };
 
@@ -44,7 +43,7 @@ async (verifiedRefreshToken: string, verifiedRefreshTokenPayload: JwtPayload):
 Promise<AuthTokenPair> => {
   // Any errors thrown will be treated as invalid login credentials
   const existingUserAuthTokens = await UserAuthTokens.findOne({
-    where: { userId: new ObjectId(verifiedRefreshTokenPayload.sub as string) }
+    where: { userId: new ObjectId(verifiedRefreshTokenPayload.sub) }
   });
   if (existingUserAuthTokens) {
     if (existingUserAuthTokens.refreshToken !== verifiedRefreshToken) {
