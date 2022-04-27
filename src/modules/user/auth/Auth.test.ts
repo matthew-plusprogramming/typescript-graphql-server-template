@@ -1,4 +1,5 @@
 import faker from 'faker';
+import { ExecutionResult } from 'graphql';
 import { User } from '@entity/User';
 import { LoginErrorMessages } from '@modules/user/auth/login/errors';
 import { apiCall, RequestType } from '@test-utils/apiCall';
@@ -20,6 +21,9 @@ afterAll(async () => {
 const delay = (ms: number): Promise<void> => new Promise((resolve) => {
   setTimeout(() => { resolve(); }, ms); }
 );
+beforeEach(async () => {
+  await delay(10);
+});
 
 const registerMutation = generateMutation({
   nameCapitalCase: 'Register',
@@ -68,6 +72,24 @@ describe('Auth', () => {
   const auth = {
     accessToken: '',
     refreshToken: ''
+  };
+  interface loginInput {
+    email?: string;
+    password?: string;
+    refreshToken?: string;
+  }
+  const login = async ({ email, password, refreshToken }: loginInput)
+  : Promise<ExecutionResult<{
+    [key: string]: any;
+  }, {
+    [key: string]: any;
+  }>> => {
+    return await graphqlCall({
+      source: loginMutation,
+      variableValues: {
+        data: { email, password, refreshToken }
+      }
+    });
   };
 
   it('register and create user', async () => {
@@ -123,12 +145,7 @@ describe('Auth', () => {
   });
 
   it('fail login on email not confirmed', async () => {
-    const response = await graphqlCall({
-      source: loginMutation,
-      variableValues: {
-        data: { email: user.email, password: user.password }
-      }
-    });
+    const response = await login({ email: user.email, password: user.password });
 
     const responseDataAuth = response.data?.login?.auth;
     expect(responseDataAuth).toBeUndefined();
@@ -149,16 +166,9 @@ describe('Auth', () => {
 
     expect(response.status).toBe(200);
     expect(response.text).toBe('OK');
-    await new Promise<void>((res) => setTimeout(() => res(), 10));
   });
   it('login user with email and password', async () => {
-    const response = await graphqlCall({
-      source: loginMutation,
-      variableValues: {
-        data: { email: user.email, password: user.password }
-      }
-    });
-
+    const response = await login({ email: user.email, password: user.password });
     const responseDataAuth = response.data?.login?.auth;
     expect(responseDataAuth).toBeDefined();
     auth.accessToken = responseDataAuth?.accessToken;
@@ -184,12 +194,7 @@ describe('Auth', () => {
     });
   });
   it('login user with refresh token', async () => {
-    const response = await graphqlCall({
-      source: loginMutation,
-      variableValues: {
-        data: { refreshToken: auth.refreshToken }
-      }
-    });
+    const response = await login({ refreshToken: auth.refreshToken });
 
     const responseDataAuth = response.data?.login?.auth;
     expect(responseDataAuth).toBeDefined();
@@ -219,13 +224,7 @@ describe('Auth', () => {
     expect(dbUserAuthTokens).toBeTruthy();
   });
   it('login user with regenerated refresh token', async () => {
-    await delay(1000);
-    const response = await graphqlCall({
-      source: loginMutation,
-      variableValues: {
-        data: { refreshToken: auth.refreshToken }
-      }
-    });
+    const response = await login({ refreshToken: auth.refreshToken });
 
     const responseDataAuth = response.data?.login?.auth;
     expect(responseDataAuth).toBeDefined();
@@ -255,13 +254,7 @@ describe('Auth', () => {
     expect(dbUserAuthTokens).toBeTruthy();
   });
   it('fail login on reuse of refresh token', async () => {
-    await delay(1000);
-    const response = await graphqlCall({
-      source: loginMutation,
-      variableValues: {
-        data: { refreshToken: auth.refreshToken }
-      }
-    });
+    const response = await login({ refreshToken: auth.refreshToken });
 
     const responseDataAuth = response.data?.login?.auth;
     expect(responseDataAuth).toBeUndefined();
@@ -272,12 +265,7 @@ describe('Auth', () => {
     });
   });
   it('fail login on invalid refresh token', async () => {
-    const response = await graphqlCall({
-      source: loginMutation,
-      variableValues: {
-        data: { refreshToken: 'thisisnotcorrect' }
-      }
-    });
+    const response = await login({ refreshToken: 'thisisnotcorrect' });
 
     const responseDataAuth = response.data?.login?.auth;
     expect(responseDataAuth).toBeUndefined();
@@ -288,12 +276,7 @@ describe('Auth', () => {
     });
   });
   it('fail login on invalid password', async () => {
-    const response = await graphqlCall({
-      source: loginMutation,
-      variableValues: {
-        data: { email: user.email, password: 'thisisnotcorrect' }
-      }
-    });
+    const response = await login({ email: user.email, password: 'thisisnotcorrect' });
 
     const responseDataAuth = response.data?.login?.auth;
     expect(responseDataAuth).toBeUndefined();
