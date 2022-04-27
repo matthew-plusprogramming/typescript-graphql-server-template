@@ -1,11 +1,11 @@
 import faker from 'faker';
 import { User } from '@entity/User';
-import { UserAuthTokens } from '@entity/UserAuthTokens';
 import { LoginErrorMessages } from '@modules/user/auth/login/errors';
 import { apiCall, RequestType } from '@test-utils/apiCall';
 import { graphqlCall } from '@test-utils/graphqlCall';
 import { generateMutation, generateQuery } from '@test-utils/graphqlUtils';
 import { startServer, stopServer } from 'server';
+import { UserAuthTokens } from '~/entity/UserAuthTokens';
 import { redis } from '~/redis';
 import { AuthErrorMessages } from './errors';
 import { RegisterErrorMessages } from './register/errors';
@@ -149,6 +149,7 @@ describe('Auth', () => {
 
     expect(response.status).toBe(200);
     expect(response.text).toBe('OK');
+    await new Promise<void>((res) => setTimeout(() => res(), 10));
   });
   it('login user with email and password', async () => {
     const response = await graphqlCall({
