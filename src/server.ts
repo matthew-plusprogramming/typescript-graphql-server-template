@@ -25,7 +25,8 @@ export const startServer =
       'synchronize': drop,
       'dropSchema': drop,
       'entities': [
-        `${__dirname}/entity/*.*`
+        `${__dirname}/entity/*.*`,
+        `${__dirname}/entity/**/*.*`
       ]
     };
 
