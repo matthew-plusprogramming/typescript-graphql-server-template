@@ -24,6 +24,7 @@ Features:
   - Confirmation emails sent through nodemailer using the Gmail API
 - General security
   - Query complexity checks
+  - Query depth limits
 
 Planned Features:
 - Generic auth module
@@ -31,10 +32,12 @@ Planned Features:
   - Forgot password functionality
 - File uploads
 - General security
-  - Query depth limits
   - Paginated results
   - API timeouts
   - Rate limiting
+    - Limiting by ip address per unit of time
+    - Limiting by user identifier per unit of time
+    - Resolver customizable rate limits
 
 ## .Env Setup
 
