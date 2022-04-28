@@ -49,6 +49,9 @@ JWT_SECRET_KEY=XYZ # Put a JWT secret key here (I normally use a randomly genera
 NODE_ENV=development # Set this to production when running production mode
 SERVER_IP=123.45.6.78 # Set this to your server's IP address (can be https://...)
 
+# Typeorm configuration
+DB_PASSWORD=XYZ
+
 # Gmail client configuration
 GMAIL_CLIENT_ID=XYZ
 GMAIL_CLIENT_SECRET=XYZ

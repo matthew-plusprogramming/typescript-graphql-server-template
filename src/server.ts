@@ -30,7 +30,8 @@ export const startServer =
       'entities': [
         `${__dirname}/entity/*.*`,
         `${__dirname}/entity/**/*.*`
-      ]
+      ],
+      'password': env.DB_PASSWORD
     };
 
     connectionOptions = testMode ?
