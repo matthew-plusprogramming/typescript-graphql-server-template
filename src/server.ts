@@ -13,7 +13,7 @@ import { redis, stopRedis } from '~/redis';
 import ormconfig from '~escape-src/ormconfig.json';
 import testOrmconfig from '~escape-src/test-ormconfig.json';
 import { env } from './config';
-import { QueryTooComplexError } from './errors';
+import { QueryTooComplexError } from './modules/security/errors';
 import { createSchema } from './utils/createSchema';
 
 let connection: DataSource;

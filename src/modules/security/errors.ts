@@ -3,6 +3,7 @@ import { Field, ObjectType } from 'type-graphql';
 
 export enum SecurityErrorMessages {
   QUERY_TOO_COMPLEX = 'Too complicated query',
+  RATE_LIMIT_EXCEEDED = 'Rate limite exceeded'
 }
 
 @ObjectType()
