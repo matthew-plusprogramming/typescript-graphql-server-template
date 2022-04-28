@@ -8,7 +8,7 @@ export enum EmailErrorMessages {
 @ObjectType()
 export class EmailFailedToSendError extends GraphQLError
   implements GraphQLFormattedError {
-  @Field()
+  @Field({ complexity: 1 })
     message: string = EmailErrorMessages.EMAIL_FAILED_TO_SEND;
 
   constructor() { super(EmailErrorMessages.EMAIL_FAILED_TO_SEND); }

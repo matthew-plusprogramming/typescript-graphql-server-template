@@ -2,12 +2,12 @@ import { Field, InputType } from 'type-graphql';
 
 @InputType()
 export class LoginInput {
-  @Field({ nullable: true })
+  @Field({ complexity: 1, nullable: true })
     email?: string;
 
-  @Field({ nullable: true })
+  @Field({ complexity: 1, nullable: true })
     password?: string;
 
-  @Field({ nullable: true })
+  @Field({ complexity: 1, nullable: true })
     refreshToken?: string;
 }

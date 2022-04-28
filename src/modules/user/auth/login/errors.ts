@@ -9,7 +9,7 @@ export enum LoginErrorMessages {
 @ObjectType()
 export class IncorrectLoginCredentialsError extends GraphQLError
   implements GraphQLFormattedError {
-  @Field()
+  @Field({ complexity: 1 })
     message: string = LoginErrorMessages.INCORRECT_LOGIN_CREDENTIALS;
 
   constructor() { super(LoginErrorMessages.INCORRECT_LOGIN_CREDENTIALS); }
@@ -18,7 +18,7 @@ export class IncorrectLoginCredentialsError extends GraphQLError
 @ObjectType()
 export class EmailNotConfirmedError extends GraphQLError
   implements GraphQLFormattedError {
-  @Field()
+  @Field({ complexity: 1 })
     message: string = LoginErrorMessages.EMAIL_NOT_CONFIRMED;
 
   constructor() { super(LoginErrorMessages.EMAIL_NOT_CONFIRMED); }

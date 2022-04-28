@@ -3,10 +3,10 @@ import { User } from '@entity/User';
 
 @ObjectType()
 export class Auth {
-  @Field()
+  @Field({ complexity: 1 })
     accessToken!: string;
 
-  @Field()
+  @Field({ complexity: 1 })
     refreshToken!: string;
 
   constructor(accessToken: string, refreshToken: string) {
@@ -17,10 +17,10 @@ export class Auth {
 
 @ObjectType()
 export class UserAndAuth {
-  @Field()
+  @Field({ complexity: 1 })
     auth!: Auth;
 
-  @Field()
+  @Field({ complexity: 1 })
     user!: User;
 
   constructor(auth: Auth, user: User) {
@@ -32,6 +32,6 @@ export class UserAndAuth {
 @ObjectType()
 export class Success {
   // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-  @Field()
+  @Field({ complexity: 1 })
     message: string = 'Success';
 }

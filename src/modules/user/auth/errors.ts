@@ -9,7 +9,7 @@ export enum AuthErrorMessages {
 @ObjectType()
 export class UnauthorizedError extends GraphQLError
   implements GraphQLFormattedError {
-  @Field()
+  @Field({ complexity: 1 })
     message: string = AuthErrorMessages.UNAUTHORIZED;
 
   extensions = {
@@ -22,7 +22,7 @@ export class UnauthorizedError extends GraphQLError
 @ObjectType()
 export class UnknownAuthError extends GraphQLError
   implements GraphQLFormattedError {
-  @Field()
+  @Field({ complexity: 1 })
     message: string = AuthErrorMessages.UNKNOWN_ERROR;
 
   constructor() { super(AuthErrorMessages.UNKNOWN_ERROR); }

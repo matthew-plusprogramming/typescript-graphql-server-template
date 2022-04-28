@@ -5,23 +5,23 @@ import { IsEmailAlreadyExist } from './IsEmailAlreadyExist';
 
 @InputType()
 export class RegisterInput {
-  @Field()
+  @Field({ complexity: 1 })
   @Length(1, 255)
     username!: string;
 
-  @Field()
+  @Field({ complexity: 1 })
   @Length(1, 255)
     firstName!: string;
 
-  @Field()
+  @Field({ complexity: 1 })
   @Length(1, 255)
     lastName!: string;
 
-  @Field()
+  @Field({ complexity: 1 })
   @IsEmail()
   @IsEmailAlreadyExist({ message: RegisterErrorMessages.EMAIL_ALREADY_IN_USE })
     email!: string;
 
-  @Field()
+  @Field({ complexity: 1 })
     password!: string;
 }

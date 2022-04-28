@@ -4,6 +4,8 @@ import {
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import express from 'express';
+import { GraphQLError } from 'graphql';
+import { fieldExtensionsEstimator, getComplexity, simpleEstimator } from 'graphql-query-complexity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { Server } from 'http';
 import { User } from '@entity/User';
@@ -41,7 +43,35 @@ export const startServer =
     apolloServer = new ApolloServer({
       schema,
       introspection: env.NODE_ENV !== 'production',
-      plugins: [ ApolloServerPluginLandingPageGraphQLPlayground ],
+      plugins: [
+        ApolloServerPluginLandingPageGraphQLPlayground,
+        {
+          requestDidStart: () => new Promise((resolve) => resolve({
+            didResolveOperation(requestContext) {
+              return new Promise((resolve) => {
+                const { request, document } = requestContext;
+                const complexity = getComplexity({
+                  schema,
+                  operationName: request.operationName,
+                  query: document,
+                  variables: request.variables,
+                  estimators: [
+                    fieldExtensionsEstimator(),
+                    simpleEstimator({ defaultComplexity: 1 })
+                  ]
+                });
+                if (complexity > parseInt(env.MAX_QUERY_COMPLEXITY)) {
+                  throw new GraphQLError(
+                    `Sorry, too complicated query!`
+                  );
+                }
+                // TODO: Implement API complexity limit per unit of time
+                resolve();
+              });
+            }
+          }))
+        }
+      ],
       context: ({ req }: {req: express.Request}) => ({ headers: req.headers })
     });
     await apolloServer.start();

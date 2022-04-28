@@ -4,7 +4,7 @@ import { IsEmailForUnconfirmedUser } from './IsEmailForUnconfirmedUser';
 
 @InputType()
 export class SendConfirmationEmailInput {
-  @Field()
+  @Field({ complexity: 1 })
   @IsEmail()
   @IsEmailForUnconfirmedUser()
     email!: string;

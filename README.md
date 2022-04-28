@@ -50,6 +50,9 @@ GMAIL_CLIENT_ID=XYZ
 GMAIL_CLIENT_SECRET=XYZ
 GMAIL_REFRESH_TOKEN=XYZ
 GMAIL_SENDER_EMAIL=XYZ@XYZ.com
+
+# Server security configuration
+MAX_QUERY_COMPLEXITY=20
 ```
 
 For the Gmail client confiuration, I'm using the Gmail API to send confirmation emails, you can edit `src/modules/user/auth/register/sendConfirmationEmail.ts` to change the method for sending emails.
