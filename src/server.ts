@@ -4,7 +4,6 @@ import {
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import express from 'express';
-import { GraphQLError } from 'graphql';
 import depthLimit from 'graphql-depth-limit';
 import { fieldExtensionsEstimator, getComplexity, simpleEstimator } from 'graphql-query-complexity';
 import { DataSource, DataSourceOptions } from 'typeorm';
@@ -14,6 +13,7 @@ import { redis, stopRedis } from '~/redis';
 import ormconfig from '~escape-src/ormconfig.json';
 import testOrmconfig from '~escape-src/test-ormconfig.json';
 import { env } from './config';
+import { QueryTooComplexError } from './errors';
 import { createSchema } from './utils/createSchema';
 
 let connection: DataSource;
@@ -64,9 +64,7 @@ export const startServer =
                   ]
                 });
                 if (complexity > parseInt(env.MAX_QUERY_COMPLEXITY)) {
-                  throw new GraphQLError(
-                    `Sorry, too complicated query!`
-                  );
+                  throw new QueryTooComplexError();
                 }
                 // TODO: Implement API complexity limit per unit of time
                 resolve();
