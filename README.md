@@ -22,14 +22,15 @@ Features:
     - Rotating refresh tokens
     - Automatic refresh token reuse detection
   - Confirmation emails sent through nodemailer using the Gmail API
+- General security
+  - Query complexity checks
 
 Planned Features:
-- Auth module
+- Generic auth module
   - Logout functionality
   - Forgot password functionality
 - File uploads
 - General security
-  - Query complexity checks
   - Query depth limits
   - Paginated results
   - API timeouts
@@ -55,7 +56,7 @@ GMAIL_SENDER_EMAIL=XYZ@XYZ.com
 MAX_QUERY_COMPLEXITY=20
 ```
 
-For the Gmail client confiuration, I'm using the Gmail API to send confirmation emails, you can edit `src/modules/user/auth/register/sendConfirmationEmail.ts` to change the method for sending emails.
+For the Gmail client confiuration, I'm using the Gmail API to send confirmation emails, you can edit `src/modules/user/auth/register/sendConfirmationEmail.ts` to change the method for sending emails. I used the `3-legged OAuth2 authentication` section of [this guide](https://nodemailer.com/smtp/oauth2/#oauth-3lo) to set it up.
 
 ## TypeORM Configuration
 
@@ -86,15 +87,16 @@ test-ormconfig.json:
 }
 ```
 
-src/server.ts (line 20):
+src/server.ts (line 25):
 ```ts
-let connectionOptions: ConnectionOptions = {
-  'type': 'mongodb', // Change this to the type of db you're using
-  'synchronize': drop,
-  'dropSchema': drop,
-  'entities': [
-    `${__dirname}/entity/*.*`
-  ]
+let connectionOptions: DataSourceOptions = {
+    'type': 'mongodb', // Change this to the type of db you're using
+    'synchronize': drop,
+    'dropSchema': drop,
+    'entities': [
+      `${__dirname}/entity/*.*`,
+      `${__dirname}/entity/**/*.*`
+    ]
 };
 ```
 
