@@ -5,6 +5,7 @@ import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import express from 'express';
 import { GraphQLError } from 'graphql';
+import depthLimit from 'graphql-depth-limit';
 import { fieldExtensionsEstimator, getComplexity, simpleEstimator } from 'graphql-query-complexity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { Server } from 'http';
@@ -43,6 +44,7 @@ export const startServer =
     apolloServer = new ApolloServer({
       schema,
       introspection: env.NODE_ENV !== 'production',
+      validationRules: [ depthLimit(parseInt(env.QUERY_DEPTH_LIMIT)) ],
       plugins: [
         ApolloServerPluginLandingPageGraphQLPlayground,
         {

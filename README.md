@@ -54,6 +54,7 @@ GMAIL_SENDER_EMAIL=XYZ@XYZ.com
 
 # Server security configuration
 MAX_QUERY_COMPLEXITY=20
+QUERY_DEPTH_LIMIT=5
 ```
 
 For the Gmail client confiuration, I'm using the Gmail API to send confirmation emails, you can edit `src/modules/user/auth/register/sendConfirmationEmail.ts` to change the method for sending emails. I used the `3-legged OAuth2 authentication` section of [this guide](https://nodemailer.com/smtp/oauth2/#oauth-3lo) to set it up.
