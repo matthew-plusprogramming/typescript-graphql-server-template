@@ -52,6 +52,11 @@ SERVER_IP=123.45.6.78 # Set this to your server's IP address (can be https://...
 # Typeorm configuration
 DB_PASSWORD=XYZ
 
+# Redis configuration
+REDIS_HOST=123.45.6.78
+REDIS_PORT=6379
+REDIS_PASSWORD=XYZ
+
 # Gmail client configuration
 GMAIL_CLIENT_ID=XYZ
 GMAIL_CLIENT_SECRET=XYZ
