@@ -62,14 +62,14 @@ export const startServer =
     });
     app.get('/user/confirm/:confirmId', async (req, res) => {
       const { confirmId } = req.params;
-      const userId = await redis.get(confirmId);
-      if (!userId) {
+      const userID = await redis.get(confirmId);
+      if (!userID) {
         res.status(404).send('Invalid id');
         return;
       }
 
       await redis.del(confirmId);
-      await User.update(userId, { confirmed: true });
+      await User.update(userID, { confirmed: true });
       res.status(200).send('OK');
     });
     apolloServer.applyMiddleware({ app });

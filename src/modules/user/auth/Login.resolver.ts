@@ -38,7 +38,7 @@ export class LoginResolver {
         });
         if (userAuthTokens) {
           const user = await User.findOne({
-            where: { _id: userAuthTokens.userId }
+            where: { _id: userAuthTokens.userID }
           });
           if (user) {
             if (!user.confirmed) throw new EmailNotConfirmedError();

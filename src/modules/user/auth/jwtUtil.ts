@@ -17,7 +17,7 @@ async (user: User): Promise<AuthTokenPair> => {
 
   // We want to keep only one pair of auth tokens valid for any given user
   const existingUserAuthTokens = await UserAuthTokens.findOne({
-    where: { userId: user._id }
+    where: { userID: user._id }
   });
   if (existingUserAuthTokens) {
     securityKey = existingUserAuthTokens.securityKey;
@@ -30,7 +30,7 @@ async (user: User): Promise<AuthTokenPair> => {
   };
 
   await UserAuthTokens.create({
-    userId: user._id,
+    userID: user._id,
     accessToken: authTokenPair.accessToken,
     refreshToken: authTokenPair.refreshToken,
     securityKey
@@ -43,7 +43,7 @@ async (verifiedRefreshToken: string, verifiedRefreshTokenPayload: JwtPayload):
 Promise<AuthTokenPair> => {
   // Any errors thrown will be treated as invalid login credentials
   const existingUserAuthTokens = await UserAuthTokens.findOne({
-    where: { userId: new ObjectId(verifiedRefreshTokenPayload.sub) }
+    where: { userID: new ObjectId(verifiedRefreshTokenPayload.sub) }
   });
   if (existingUserAuthTokens) {
     if (existingUserAuthTokens.refreshToken !== verifiedRefreshToken) {
@@ -52,7 +52,7 @@ Promise<AuthTokenPair> => {
       throw new Error();
     }
     const user = await User.findOne({
-      where: { _id: existingUserAuthTokens.userId }
+      where: { _id: existingUserAuthTokens.userID }
     });
     if (user) {
       // Check key against current password and security key

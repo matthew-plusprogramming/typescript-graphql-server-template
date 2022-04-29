@@ -3,10 +3,10 @@ import { env } from '~/config';
 import { redis } from '~/redis';
 
 export const createConfirmationUrl =
-async (userId: string): Promise<string> => {
+async (userID: string): Promise<string> => {
   const id = v4();
 
-  await redis.set(id, userId, 'EX', 60 * 60 * 24);
+  await redis.set(id, userID, 'EX', 60 * 60 * 24);
   const port = env.PORT;
   const fullServerIP =
     `${env.SERVER_IP}${(port !== '80' && port !== '443') ? `:${port}` : '' }`;

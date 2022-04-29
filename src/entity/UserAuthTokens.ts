@@ -6,7 +6,7 @@ export class UserAuthTokens extends BaseEntity {
     _id!: ObjectID;
 
   @Column('string')
-    userId!: ObjectID;
+    userID!: ObjectID;
 
   @Column()
     accessToken!: string;

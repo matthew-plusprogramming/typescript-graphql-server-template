@@ -201,7 +201,7 @@ describe('Auth', () => {
 
     const dbUser = await User.findOne({ where: { email: user.email } });
     const dbUserAuthTokens =
-      await UserAuthTokens.findOne({ where: { userId: dbUser?._id } });
+      await UserAuthTokens.findOne({ where: { userID: dbUser?._id } });
     expect(dbUserAuthTokens).toBeTruthy();
   });
   it('login user with regenerated refresh token', async () => {
@@ -231,7 +231,7 @@ describe('Auth', () => {
 
     const dbUser = await User.findOne({ where: { email: user.email } });
     const dbUserAuthTokens =
-      await UserAuthTokens.findOne({ where: { userId: dbUser?._id } });
+      await UserAuthTokens.findOne({ where: { userID: dbUser?._id } });
     expect(dbUserAuthTokens).toBeTruthy();
   });
   it('fail login on reuse of refresh token', async () => {
