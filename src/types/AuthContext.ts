@@ -1,9 +1,7 @@
 import { AuthToken } from './authTypes';
+import { BaseContext } from './BaseContext';
 
-export interface AuthContext {
-  headers: {
-    authorization: string;
-  };
+export interface AuthContext extends BaseContext {
   authContext: {
     userToken: AuthToken | null;
   };

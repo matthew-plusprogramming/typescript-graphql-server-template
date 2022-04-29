@@ -1,11 +1,13 @@
 import { hash } from 'bcryptjs';
 import { Arg, Mutation, Resolver } from 'type-graphql';
 import { User } from '@entity/User';
+import { CountRateLimitByIP } from '~/modules/security/middleware/rateLimit';
 import { Email } from './Email.resolver';
 import { RegisterInput } from './register/RegisterInput';
 
 @Resolver()
 export class RegisterResolver {
+  @CountRateLimitByIP(1, 5)
   @Mutation(() => User)
   async register(
     @Arg('data') {

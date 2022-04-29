@@ -4,6 +4,7 @@ import { Arg, Mutation, Resolver } from 'type-graphql';
 import { User } from '@entity/User';
 import { env } from '~/config';
 import { UserAuthTokens } from '~/entity/UserAuthTokens';
+import { CountRateLimitByIP } from '~/modules/security/middleware/rateLimit';
 import { UserAndAuth } from './Auth';
 import { generateAuthTokenPair, regenerateAuthTokenPair } from './jwtUtil';
 import {
@@ -14,6 +15,7 @@ import { LoginInput } from './login/LoginInput';
 
 @Resolver()
 export class LoginResolver {
+  @CountRateLimitByIP(2, 5)
   @Mutation(() => UserAndAuth)
   async login(
     @Arg('data') {

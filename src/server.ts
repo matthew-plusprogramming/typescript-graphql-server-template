@@ -5,7 +5,6 @@ import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import express from 'express';
 import depthLimit from 'graphql-depth-limit';
-import { fieldExtensionsEstimator, getComplexity, simpleEstimator } from 'graphql-query-complexity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { Server } from 'http';
 import { User } from '@entity/User';
@@ -13,7 +12,7 @@ import { redis, stopRedis } from '~/redis';
 import ormconfig from '~escape-src/ormconfig.json';
 import testOrmconfig from '~escape-src/test-ormconfig.json';
 import { env } from './config';
-import { QueryTooComplexError } from './modules/security/errors';
+import { RateLimitPlugin } from './rateLimitPlugin';
 import { createSchema } from './utils/createSchema';
 
 let connection: DataSource;
@@ -23,6 +22,7 @@ export let app: express.Express;
 
 export const startServer =
   async (testMode = false, drop = false): Promise<void> => {
+    // Construct typeorm connection options
     let connectionOptions: DataSourceOptions = {
       'type': 'mongodb',
       'synchronize': drop,
@@ -48,37 +48,15 @@ export const startServer =
       validationRules: [ depthLimit(parseInt(env.QUERY_DEPTH_LIMIT)) ],
       plugins: [
         ApolloServerPluginLandingPageGraphQLPlayground,
-        {
-          requestDidStart: () => new Promise((resolve) => resolve({
-            didResolveOperation(requestContext) {
-              return new Promise((resolve) => {
-                const { request, document } = requestContext;
-                const complexity = getComplexity({
-                  schema,
-                  operationName: request.operationName,
-                  query: document,
-                  variables: request.variables,
-                  estimators: [
-                    fieldExtensionsEstimator(),
-                    simpleEstimator({ defaultComplexity: 1 })
-                  ]
-                });
-                if (complexity > parseInt(env.MAX_QUERY_COMPLEXITY)) {
-                  throw new QueryTooComplexError();
-                }
-                // TODO: Implement API complexity limit per unit of time
-                resolve();
-              });
-            }
-          }))
-        }
+        RateLimitPlugin
       ],
-      context: ({ req }: {req: express.Request}) => ({ headers: req.headers })
+      context: ({ req: { headers, ip } }: {req: express.Request}) => ({ headers, ip })
     });
     await apolloServer.start();
     app = express();
     app.use(cors());
 
+    // TODO: Refactor these into separate file
     app.get('/', (_, res) => {
       res.status(200).send('OK');
     });

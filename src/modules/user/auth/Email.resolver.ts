@@ -1,5 +1,6 @@
 import { Arg, Mutation, Resolver } from 'type-graphql';
 import { User } from '@entity/User';
+import { CountRateLimitByIP } from '~/modules/security/middleware/rateLimit';
 import { Success } from './Auth';
 import { sendConfirmationEmail } from './email/sendConfirmationEmail';
 import { SendConfirmationEmailInput } from './email/SendConfirmationEmailInput';
@@ -8,6 +9,7 @@ import { createConfirmationUrl } from './register/createConfirmationUrl';
 
 @Resolver()
 export class Email {
+  @CountRateLimitByIP(1, 5)
   @Mutation(() => Success)
   async sendConfirmationEmail(
     @Arg('data') {

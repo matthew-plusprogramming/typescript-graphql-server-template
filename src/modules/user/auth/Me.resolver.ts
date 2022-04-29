@@ -1,13 +1,14 @@
 import { ObjectId } from 'mongodb';
 import { Ctx, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { User } from '@entity/User';
+import { TotalComplexityRateLimitByUserID } from '~/modules/security/middleware/rateLimit';
 import { AuthContext } from '~types/AuthContext';
 import { UnknownAuthError } from './errors';
 import { isAuth } from './middleware/isAuth';
 
 @Resolver()
 export class MeResolver {
-  @UseMiddleware(isAuth)
+  @UseMiddleware(isAuth, TotalComplexityRateLimitByUserID)
   @Query(() => User)
   async me(@Ctx() ctx: AuthContext): Promise<User> {
     if (!ctx.authContext.userToken) throw new UnknownAuthError();
