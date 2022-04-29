@@ -11,6 +11,8 @@ Built with:
 - MongoDB
 - Redis
 
+**Note: the security module (rate limiting) requires that at least Redisv7 be installed on your system**
+
 Features:
 - Support for wallaby.js
 - ESLint configuration
@@ -22,9 +24,13 @@ Features:
     - Rotating refresh tokens
     - Automatic refresh token reuse detection
   - Confirmation emails sent through nodemailer using the Gmail API
+  - Resend confirmation email functionality
 - General security
   - Query complexity checks
   - Query depth limits
+  - Rate limiting
+    - By count by IP or userID (for limiting individual resolvers)
+    - By total complexity by IP or userID (for limiting globally)
 
 Planned Features:
 - Generic auth module
@@ -35,9 +41,7 @@ Planned Features:
   - Paginated results
   - API timeouts
   - Rate limiting
-    - Limiting by ip address per unit of time
-    - Limiting by user identifier per unit of time
-    - Resolver customizable rate limits
+    - Sliding window rate limiting
 
 ## .Env Setup
 
@@ -66,6 +70,10 @@ GMAIL_SENDER_EMAIL=XYZ@XYZ.com
 # Server security configuration
 MAX_QUERY_COMPLEXITY=20
 QUERY_DEPTH_LIMIT=5
+QUERY_COMPLEXITY_RATE_LIMIT_BY_USER_ID_TIMEFRAME_SECONDS=60
+QUERY_COMPLEXITY_RATE_LIMIT_BY_USER_ID_VALUE=10
+QUERY_COMPLEXITY_RATE_LIMIT_BY_IP_TIMEFRAME_SECONDS=60
+QUERY_COMPLEXITY_RATE_LIMIT_BY_IP_VALUE=10
 ```
 
 For the Gmail client confiuration, I'm using the Gmail API to send confirmation emails, you can edit `src/modules/user/auth/register/sendConfirmationEmail.ts` to change the method for sending emails. I used the `3-legged OAuth2 authentication` section of [this guide](https://nodemailer.com/smtp/oauth2/#oauth-3lo) to set it up.
