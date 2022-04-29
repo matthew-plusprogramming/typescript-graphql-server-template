@@ -8,8 +8,8 @@ async (userId: string): Promise<string> => {
 
   await redis.set(id, userId, 'EX', 60 * 60 * 24);
   const port = env.PORT;
-  const fullServerIp =
+  const fullServerIP =
     `${env.SERVER_IP}${(port !== '80' && port !== '443') ? `:${port}` : '' }`;
 
-  return `${fullServerIp}/user/confirm/${id}`;
+  return `${fullServerIP}/user/confirm/${id}`;
 };
