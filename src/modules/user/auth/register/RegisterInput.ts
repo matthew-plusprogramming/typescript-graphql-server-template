@@ -23,5 +23,6 @@ export class RegisterInput {
     email!: string;
 
   @Field({ complexity: 1 })
+  @Length(1, 72)
     password!: string;
 }
