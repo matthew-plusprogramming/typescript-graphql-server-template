@@ -7,7 +7,6 @@
       "esnext.asynciterable"
     ],
     "typeRoots": [
-      "./types",
       "./node_modules/@types"
     ],
     "types": [
@@ -52,6 +51,9 @@
       ],
       "@utils/*": [
         "utils/*"
+      ],
+      "*": [
+        "types/*"
       ]
     }
   },
