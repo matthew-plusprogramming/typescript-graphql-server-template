@@ -42,6 +42,7 @@ Planned Features:
   - API timeouts
   - Rate limiting
     - Sliding window rate limiting
+    - Rate limit headers
 
 ## .Env Setup
 
